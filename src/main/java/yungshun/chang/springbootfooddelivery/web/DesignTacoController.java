@@ -3,12 +3,15 @@ package yungshun.chang.springbootfooddelivery.web;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import yungshun.chang.springbootfooddelivery.Ingredient;
 import yungshun.chang.springbootfooddelivery.Taco;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +46,16 @@ public class DesignTacoController {
         for (Ingredient.Type type: types) {
             model.addAttribute(type.toString().toLowerCase(), filterByType(ingredients, type));
         }
+    }
+
+    @PostMapping
+    public String processDesign(@Valid @ModelAttribute("design") Taco design, Errors errors, Model model) {
+        if (errors.hasErrors()) {
+            return "design";
+        }
+        log.info("Processing design: " + design);
+
+        return "redirect:/orders/current";
     }
 
     private List<Ingredient> filterByType(List<Ingredient> ingredients, Ingredient.Type type) {
